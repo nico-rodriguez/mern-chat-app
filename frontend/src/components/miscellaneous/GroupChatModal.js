@@ -11,11 +11,12 @@ import {
   ModalHeader,
   ModalOverlay,
   useDisclosure,
-  useToast,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import { useState } from 'react';
 import { ChatState } from '../../context/ChatProvider';
+import { useHeaders } from '../../hooks/httpHeaders';
+import { useCustomToast } from '../../hooks/toast';
 import UserBadgeItem from '../UserAvatar/UserBadgeItem';
 import UserListItem from '../UserAvatar/UserListItem';
 
@@ -30,7 +31,9 @@ const GroupChatModal = ({ children }) => {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const toast = useToast();
+  const headers = useHeaders();
+
+  const toast = useCustomToast();
 
   const handleSearch = async query => {
     setSearch(query);
@@ -38,39 +41,19 @@ const GroupChatModal = ({ children }) => {
 
     try {
       setLoading(true);
-      const config = {
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
-      };
-      const { data } = await axios.get(`/api/users?search=${query}`, config);
+      const { data } = await axios.get(`/api/users?search=${query}`, headers);
       setSearchResults(data);
       setLoading(false);
     } catch (error) {
-      toast({
-        title: 'Error occurred!',
-        description: 'Failed to fetch users',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-        position: 'bottom-left',
-      });
+      toast('Error occurred!', 'error', 'bottom-left', 'Failed to fetch users');
     }
   };
 
   const handleGroup = user => () => {
     if (selectedUsers.includes(user)) {
-      toast({
-        title: 'User already added',
-        status: 'warning',
-        duration: 5000,
-        isClosable: true,
-        position: 'top',
-      });
-
+      toast('User already added', 'warning', 'top');
       return;
     }
-
     setSelectedUsers([...selectedUsers, user]);
   };
 
@@ -80,49 +63,25 @@ const GroupChatModal = ({ children }) => {
 
   const handleSubmit = async () => {
     if (!groupChatName || !selectedUsers) {
-      toast({
-        title: 'Fill all the fields',
-        status: 'warning',
-        duration: 5000,
-        isClosable: true,
-        position: 'top',
-      });
+      toast('Fill all the fields', 'warning', 'top');
       return;
     }
 
     try {
-      const config = {
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
-      };
       const { data } = await axios.post(
         '/api/chats/group',
         {
           name: groupChatName,
           users: selectedUsers.map(({ _id }) => _id),
         },
-        config
+        headers
       );
 
       setChats([data, ...chats]);
       onClose();
-      toast({
-        title: 'New group chat created!',
-        status: 'success',
-        duration: 5000,
-        isClosable: true,
-        position: 'bottom',
-      });
-    } catch (error) {
-      toast({
-        title: 'Failed to create the chat group',
-        description: error.response.data,
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-        position: 'bottom',
-      });
+      toast('New group chat created!', 'success', 'bottom');
+    } catch ({ message }) {
+      toast('Failed to create the chat group', 'error', 'bottom', message);
     }
   };
 

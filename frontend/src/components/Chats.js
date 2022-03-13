@@ -1,38 +1,28 @@
 import axios from 'axios';
-import { Box, Button, Stack, Text, useToast } from '@chakra-ui/react';
+import { Box, Button, Stack, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { ChatState } from '../context/ChatProvider';
 import { AddIcon } from '@chakra-ui/icons';
 import Loading from './UsersLoading';
-import { getSender } from '../config/Chat';
 import GroupChatModal from './miscellaneous/GroupChatModal';
+import { useHeaders } from '../hooks/httpHeaders';
+import { useCustomToast } from '../hooks/toast';
 
 const Chats = ({ fetchAgain }) => {
   const [loggedUser, setLoggedUser] = useState();
 
-  const { selectedChat, setSelectedChat, user, chats, setChats } = ChatState();
+  const { user, selectedChat, setSelectedChat, chats, setChats } = ChatState();
 
-  const toast = useToast();
+  const headers = useHeaders();
+
+  const toast = useCustomToast();
 
   const fetchChats = async () => {
     try {
-      const config = {
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
-      };
-
-      const { data } = await axios.get('/api/chats', config);
+      const { data } = await axios.get('/api/chats', headers);
       setChats(data);
     } catch (error) {
-      toast({
-        title: 'Error occurred!',
-        description: 'Failed to load chats',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-        position: 'bottom-left',
-      });
+      toast('Error occurred!', 'error', 'bottom-left', 'Failed to load chats');
     }
   };
 
@@ -98,7 +88,7 @@ const Chats = ({ fetchAgain }) => {
               >
                 <Text>
                   {!chat.isGroup
-                    ? getSender(loggedUser, chat.users)
+                    ? chat.users.filter(({ _id }) => _id !== user._id)[0].name
                     : chat.name}
                 </Text>
               </Box>

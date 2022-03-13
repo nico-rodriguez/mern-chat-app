@@ -18,7 +18,6 @@ import {
   Text,
   Tooltip,
   useDisclosure,
-  useToast,
 } from '@chakra-ui/react';
 import {
   ArrowForwardIcon,
@@ -32,6 +31,8 @@ import { useHistory } from 'react-router-dom';
 import UsersLoading from '../UsersLoading';
 import UserListItem from '../UserAvatar/UserListItem';
 import { ChatState } from '../../context/ChatProvider';
+import { useHeaders } from '../../hooks/httpHeaders';
+import { useCustomToast } from '../../hooks/toast';
 
 const SideDrawer = () => {
   const [search, setSearch] = useState('');
@@ -41,11 +42,13 @@ const SideDrawer = () => {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const toast = useToast();
+  const toast = useCustomToast();
 
   const history = useHistory();
 
   const { user, setSelectedChat, chats, setChats } = ChatState();
+
+  const headers = useHeaders();
 
   const logoutHandler = () => {
     localStorage.removeItem('user');
@@ -54,64 +57,37 @@ const SideDrawer = () => {
 
   const handleSearch = async () => {
     if (!search) {
-      toast({
-        title: 'Enter a name or email',
-        status: 'warning',
-        duration: 5000,
-        isClosable: true,
-        position: 'top-left',
-      });
+      toast('Enter a name or email', 'warning', 'top-left');
       return;
     }
 
     try {
       setLoading(true);
-      const config = {
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
-      };
-      const { data } = await axios.get(`/api/users?search=${search}`, config);
+      const { data } = await axios.get(`/api/users?search=${search}`, headers);
       setSearchResult(data);
       setLoading(false);
     } catch (error) {
-      toast({
-        title: 'Error ocurred!',
-        description: 'Failed to load the search results',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-        position: 'bottom-left',
-      });
+      toast(
+        'Error ocurred!',
+        'error',
+        'bottom-left',
+        'Failed to load search results'
+      );
     }
   };
 
   const accessChat = async userId => {
     try {
       setLoadingChat(true);
-
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${user.token}`,
-        },
-      };
-      const { data } = await axios.post('/api/chats', { userId }, config);
+      const { data } = await axios.post('/api/chats', { userId }, headers);
 
       if (!chats.find(({ _id }) => _id === data._id))
         setChats([data, ...chats]);
       setSelectedChat(data);
       setLoadingChat(false);
       onClose();
-    } catch (error) {
-      toast({
-        title: 'Error fetching the chat',
-        description: error.message,
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-        position: 'bottom-left',
-      });
+    } catch ({ message }) {
+      toast('Error fetching the chat', 'error', 'bottom-left', message);
     }
   };
 

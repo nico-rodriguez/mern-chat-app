@@ -15,11 +15,17 @@
 
 ## Features
 
+The original tutorial features:
+
 - Cloud hosted images (Cloudinary)
 - User search with regex
 - Add/remove users from group chats
 - Context API for managing state
 - User authentication and authorization with JSON web tokens
+
+My personal improvements over it:
+
+- Custom hooks
 
 ## Getting Started
 
