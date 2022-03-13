@@ -1,4 +1,6 @@
 const express = require('express');
+const winston = require('winston');
+const expressWinston = require('express-winston');
 const app = express();
 const dotenv = require('dotenv');
 dotenv.config();
@@ -12,6 +14,16 @@ const { notFound } = require('./middleware/notFound');
 const { errorHandler } = require('./middleware/errorHandler');
 
 app.use(express.json());
+
+app.use(
+  expressWinston.logger({
+    transports: [new winston.transports.Console()],
+    format: winston.format.combine(
+      winston.format.colorize(),
+      winston.format.json()
+    ),
+  })
+);
 
 app.use('/api/users', userRouter);
 app.use('/api/chats', chatsRouter);
