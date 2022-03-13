@@ -58,7 +58,6 @@ const fetchChats = asyncHandler(async (req, res) => {
       .populate('users', '-password')
       .populate('groupAdmin', '-password')
       .populate('latestMessage')
-      .populate('latestMessage', 'name picture email')
       .sort({ updatedAt: -1 });
 
     res.json(chats);
