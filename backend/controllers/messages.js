@@ -4,12 +4,13 @@ const Message = require('../models/message');
 const User = require('../models/user');
 
 const sendMessage = asyncHandler(async (req, res) => {
-  const { content, chatId } = req.body;
   const { user } = req;
+  const { content } = req.body;
+  const { chatId } = req.params;
 
-  if (!content || !chatId) {
-    console.log('Missing data in request!');
-    return res.sendStatus(400);
+  if (!content) {
+    res.status(400);
+    throw new Error('Missing data in request!');
   }
 
   const newMessage = {
@@ -18,38 +19,41 @@ const sendMessage = asyncHandler(async (req, res) => {
     chat: chatId,
   };
 
-  try {
-    let message = await Message.create(newMessage);
-    message = await message.populate('sender', 'name picture');
-    message = await message.populate('chat');
-    message = await User.populate(message, {
-      path: 'chat.users',
-      select: 'name picture email',
-    });
-    await Chat.findByIdAndUpdate(chatId, {
-      latestMessage: message,
-    });
-
-    res.json(message);
-  } catch ({ message }) {
+  let message = await Message.create(newMessage);
+  message = await message.populate('sender', 'name picture');
+  message = await message.populate('chat');
+  message = await User.populate(message, {
+    path: 'chat.users',
+    select: 'name picture email',
+  });
+  if (!message) {
     res.status(400);
-    throw new Error(message);
+    throw new Error('Could not create new message');
   }
+
+  const chat = await Chat.findByIdAndUpdate(chatId, {
+    latestMessage: message,
+  });
+  if (!chat) {
+    res.status(400);
+    throw new Error('Could not create or update the chat');
+  }
+
+  res.json(message);
 });
 
 const getMessages = asyncHandler(async (req, res) => {
   const { chatId } = req.params;
 
-  try {
-    const messages = await Message.find({ chat: chatId })
-      .populate('sender', 'name picture email')
-      .populate('chat');
-
-    res.json(messages);
-  } catch ({ message }) {
+  const messages = await Message.find({ chat: chatId })
+    .populate('sender', 'name picture email')
+    .populate('chat');
+  if (!messages) {
     res.status(400);
-    throw new Error(message);
+    throw new Error('Could not find message');
   }
+
+  res.json(messages);
 });
 
 module.exports = { sendMessage, getMessages };

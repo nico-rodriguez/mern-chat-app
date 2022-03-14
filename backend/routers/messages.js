@@ -4,7 +4,6 @@ const { auth } = require('../middleware/auth');
 
 const router = Router();
 
-router.route('/').post(auth, sendMessage);
-router.route('/:chatId').get(auth, getMessages);
+router.route('/').post(auth, sendMessage).get(auth, getMessages);
 
 module.exports = router;

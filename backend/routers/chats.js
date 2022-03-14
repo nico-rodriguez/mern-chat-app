@@ -13,11 +13,11 @@ const router = Router();
 
 router.route('/').post(auth, accessChat).get(auth, fetchChats);
 
-router.route('/group').post(auth, createGroupChat);
+router.route('/new-group').post(auth, createGroupChat);
 
-router.route('/rename').put(auth, renameGroup);
+router.route('/:chatId/rename-group').put(auth, renameGroup);
 
-router.route('/groupadd').put(auth, addToGroup);
-router.route('/groupremove').put(auth, removeFromGroup);
+router.route('/:chatId/add-user').put(auth, addToGroup);
+router.route('/:chatId/remove-user').put(auth, removeFromGroup);
 
 module.exports = router;
