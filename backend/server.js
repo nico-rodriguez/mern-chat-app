@@ -27,7 +27,7 @@ app.use(
 
 app.use('/api/users', userRouter);
 app.use('/api/chats', chatsRouter);
-app.use('/api/chats/:chatId/messages', messagesRouter);
+app.use('/api/chats', messagesRouter);
 
 app.use(notFound);
 app.use(errorHandler);

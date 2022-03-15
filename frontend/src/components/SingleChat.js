@@ -1,14 +1,79 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
-import { Box, IconButton, Text } from '@chakra-ui/react';
+import {
+  Box,
+  FormControl,
+  IconButton,
+  Input,
+  Spinner,
+  Text,
+} from '@chakra-ui/react';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 import { ChatState } from '../context/ChatProvider';
 import { useSender } from '../hooks/chats';
+import { useHeaders } from '../hooks/httpHeaders';
+import { useCustomToast } from '../hooks/toast';
 import ProfileModal from './miscellaneous/ProfileModal';
 import UpdateGroupChatModal from './miscellaneous/UpdateGroupChatModal';
+import ScrollableChat from './ScrollableChat';
+
+import './SingleChat.css';
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [newMessage, setNewMessage] = useState('');
+
   const { selectedChat, setSelectedChat } = ChatState();
 
-  const sender = useSender(selectedChat?.users);
+  const { sender } = useSender();
+
+  const headers = useHeaders();
+
+  const toast = useCustomToast();
+
+  const handleTyping = event => {
+    setNewMessage(event.target.value);
+  };
+
+  const sendMessage = async event => {
+    if (event.key === 'Enter' && newMessage) {
+      try {
+        // Clear the message input before the API call for faster UX
+        setNewMessage('');
+        const { data } = await axios.post(
+          `/api/chats/${selectedChat._id}/messages`,
+          {
+            content: newMessage,
+          },
+          headers
+        );
+        setMessages([...messages, data]);
+      } catch (error) {
+        toast('Error ocurred!', 'error', 'bottom', 'Failed to send message');
+      }
+    }
+  };
+
+  const fetchMessages = async () => {
+    if (!selectedChat) return;
+
+    try {
+      setLoading(true);
+      const { data } = await axios.get(
+        `/api/chats/${selectedChat._id}/messages`,
+        headers
+      );
+      setMessages(data);
+      setLoading(false);
+    } catch (error) {
+      toast('Error ocurred!', 'error', 'bottom', 'Failed to load messages');
+    }
+  };
+
+  useEffect(() => {
+    fetchMessages();
+  }, [selectedChat]);
 
   return (
     <>
@@ -40,6 +105,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 <UpdateGroupChatModal
                   fetchAgain={fetchAgain}
                   setFetchAgain={setFetchAgain}
+                  fetchMessages={fetchMessages}
                 />
               </>
             )}
@@ -54,7 +120,29 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             h="100%"
             borderRadius="lg"
           >
-            Messages here
+            {loading ? (
+              <Spinner
+                size="xl"
+                w={20}
+                h={20}
+                alignSelf="center"
+                margin="auto"
+              />
+            ) : (
+              <div className="messages">
+                <ScrollableChat messages={messages} />
+              </div>
+            )}
+
+            <FormControl onKeyDown={sendMessage} isRequired mt={3}>
+              <Input
+                variant="filled"
+                bg="#e0e0e0"
+                placeholder="Enter a message..."
+                onChange={handleTyping}
+                value={newMessage}
+              ></Input>
+            </FormControl>
           </Box>
         </>
       ) : (

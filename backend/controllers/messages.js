@@ -7,6 +7,7 @@ const sendMessage = asyncHandler(async (req, res) => {
   const { user } = req;
   const { content } = req.body;
   const { chatId } = req.params;
+  console.log(user, content, chatId);
 
   if (!content) {
     res.status(400);

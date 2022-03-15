@@ -26,6 +26,7 @@ The original tutorial features:
 My personal improvements over it:
 
 - Custom hooks
+- Better structure of the URLs for the API
 
 ## Getting Started
 
