@@ -27,7 +27,7 @@ const GroupChatModal = ({ children }) => {
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const { user, chats, setChats } = ChatState();
+  const { chats, setChats } = ChatState();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 

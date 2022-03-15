@@ -8,8 +8,6 @@ const ScrollableChat = ({ messages }) => {
   const { isLastMessage, isSameUser, isSameSender, isSameSenderMargin } =
     useSender();
 
-  console.log(messages);
-
   return (
     <ScrollableFeed>
       {messages &&
