@@ -17,6 +17,7 @@
 
 The original tutorial features:
 
+- socket.io for instant messaging
 - Cloud hosted images (Cloudinary)
 - User search with regex
 - Add/remove users from group chats

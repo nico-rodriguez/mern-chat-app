@@ -16,16 +16,26 @@ import { useCustomToast } from '../hooks/toast';
 import ProfileModal from './miscellaneous/ProfileModal';
 import UpdateGroupChatModal from './miscellaneous/UpdateGroupChatModal';
 import ScrollableChat from './ScrollableChat';
+import { io } from 'socket.io-client';
+import Lottie from 'react-lottie';
+import animationData from '../animations/typing.json';
 
 import './SingleChat.css';
 
+const ENDPOINT = 'http://localhost:5000';
+let socket, selectedChatCompare;
+let timer;
+
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
+  const { user } = ChatState();
+
+  const [socketConnected, setSocketConnected] = useState(false);
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [newMessage, setNewMessage] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
 
   const { selectedChat, setSelectedChat } = ChatState();
-
   const { sender } = useSender();
 
   const headers = useHeaders();
@@ -34,6 +44,15 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
   const handleTyping = event => {
     setNewMessage(event.target.value);
+
+    if (!socketConnected) return;
+
+    socket.emit('typing', selectedChat._id);
+
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      socket.emit('stop_typing', selectedChat._id);
+    }, 3000);
   };
 
   const sendMessage = async event => {
@@ -41,6 +60,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
       try {
         // Clear the message input before the API call for faster UX
         setNewMessage('');
+        socket.emit('stop_typing', selectedChat._id);
         const { data } = await axios.post(
           `/api/chats/${selectedChat._id}/messages`,
           {
@@ -48,6 +68,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
           },
           headers
         );
+
+        socket.emit('new_message', data);
         setMessages([...messages, data]);
       } catch (error) {
         toast('Error ocurred!', 'error', 'bottom', 'Failed to send message');
@@ -66,6 +88,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
       );
       setMessages(data);
       setLoading(false);
+
+      socket.emit('join_chat', selectedChat._id);
     } catch (error) {
       toast('Error ocurred!', 'error', 'bottom', 'Failed to load messages');
     }
@@ -73,7 +97,36 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
   useEffect(() => {
     fetchMessages();
+
+    selectedChatCompare = selectedChat;
   }, [selectedChat]);
+
+  useEffect(() => {
+    socket = io(ENDPOINT);
+    socket.emit('setup', user);
+    socket.on('connected', () => {
+      setSocketConnected(true);
+    });
+    socket.on('typing', () => {
+      setIsTyping(true);
+    });
+    socket.on('stop_typing', () => {
+      setIsTyping(false);
+    });
+  }, []);
+
+  useEffect(() => {
+    socket.on('message_received', message => {
+      if (
+        !selectedChatCompare ||
+        selectedChatCompare._id !== message.chat._id
+      ) {
+        // TODO: give notification
+      } else {
+        setMessages([...messages, message]);
+      }
+    });
+  });
 
   return (
     <>
@@ -135,6 +188,27 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             )}
 
             <FormControl onKeyDown={sendMessage} isRequired mt={3}>
+              {isTyping ? (
+                <Lottie
+                  options={{
+                    loop: true,
+                    autoplay: true,
+                    animationData,
+                    rendererSettings: {
+                      preserveAspectRatio: 'xMidYMid slice',
+                    },
+                  }}
+                  height={50}
+                  width={70}
+                  style={{
+                    marginBottom: 15,
+                    marginLeft: 0,
+                    borderRadius: '40%',
+                  }}
+                />
+              ) : (
+                <></>
+              )}
               <Input
                 variant="filled"
                 bg="#e0e0e0"
