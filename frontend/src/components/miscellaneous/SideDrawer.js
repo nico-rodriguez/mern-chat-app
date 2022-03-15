@@ -19,12 +19,8 @@ import {
   Tooltip,
   useDisclosure,
 } from '@chakra-ui/react';
-import {
-  ArrowForwardIcon,
-  BellIcon,
-  ChevronDownIcon,
-  DragHandleIcon,
-} from '@chakra-ui/icons';
+import { BellIcon, ChevronDownIcon } from '@chakra-ui/icons';
+import NotificationBadge, { Effect } from 'react-notification-badge';
 import { useState } from 'react';
 import ProfileModal from './ProfileModal';
 import { useHistory } from 'react-router-dom';
@@ -33,6 +29,7 @@ import UserListItem from '../UserAvatar/UserListItem';
 import { ChatState } from '../../context/ChatProvider';
 import { useHeaders } from '../../hooks/httpHeaders';
 import { useCustomToast } from '../../hooks/toast';
+import { useSender } from '../../hooks/chats';
 
 const SideDrawer = () => {
   const [search, setSearch] = useState('');
@@ -46,7 +43,16 @@ const SideDrawer = () => {
 
   const history = useHistory();
 
-  const { user, setSelectedChat, chats, setChats } = ChatState();
+  const {
+    user,
+    setSelectedChat,
+    chats,
+    setChats,
+    notification,
+    setNotification,
+  } = ChatState();
+
+  const { sender } = useSender();
 
   const headers = useHeaders();
 
@@ -118,9 +124,29 @@ const SideDrawer = () => {
         <div>
           <Menu>
             <MenuButton p={1}>
+              <NotificationBadge
+                count={notification.length}
+                effect={Effect.SCALE}
+              />
               <BellIcon fontSize="2xl" m={1} />
             </MenuButton>
-            {/* <MenuList></MenuList> */}
+            <MenuList pl={2}>
+              {!(notification.length > 0)
+                ? 'No new messages'
+                : notification.map(notif => (
+                    <MenuItem
+                      key={notif._id}
+                      onClick={() => {
+                        setSelectedChat(notif.chat);
+                        setNotification(notification.filter(n => n !== notif));
+                      }}
+                    >
+                      {notif.chat.isGroup
+                        ? `New message in ${notif.chat.name}`
+                        : `New message from ${sender.name}`}
+                    </MenuItem>
+                  ))}
+            </MenuList>
           </Menu>
 
           <Menu>

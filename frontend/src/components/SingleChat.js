@@ -27,7 +27,8 @@ let socket, selectedChatCompare;
 let timer;
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
-  const { user } = ChatState();
+  const { user, selectedChat, setSelectedChat, notification, setNotification } =
+    ChatState();
 
   const [socketConnected, setSocketConnected] = useState(false);
   const [messages, setMessages] = useState([]);
@@ -35,7 +36,6 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const [newMessage, setNewMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
 
-  const { selectedChat, setSelectedChat } = ChatState();
   const { sender } = useSender();
 
   const headers = useHeaders();
@@ -121,7 +121,10 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         !selectedChatCompare ||
         selectedChatCompare._id !== message.chat._id
       ) {
-        // TODO: give notification
+        if (!notification.includes(message)) {
+          setNotification([message, ...notification]);
+          setFetchAgain(!fetchAgain);
+        }
       } else {
         setMessages([...messages, message]);
       }
