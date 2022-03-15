@@ -2,11 +2,14 @@ import axios from 'axios';
 import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useCustomToast } from './toast';
+import { ChatState } from '../context/ChatProvider';
 
 export const useLogin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const { setUser } = ChatState();
 
   const history = useHistory();
 
@@ -33,7 +36,7 @@ export const useLogin = () => {
       );
 
       toast('Login successful!', 'success', 'bottom');
-      localStorage.setItem('user', JSON.stringify(data));
+      setUser(data);
       setLoading(false);
       history.push('/chats');
     } catch ({ message }) {

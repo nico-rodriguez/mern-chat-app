@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Box, Button, Stack, Text } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { ChatState } from '../context/ChatProvider';
 import { AddIcon } from '@chakra-ui/icons';
 import Loading from './UsersLoading';
@@ -9,8 +9,6 @@ import { useHeaders } from '../hooks/httpHeaders';
 import { useCustomToast } from '../hooks/toast';
 
 const Chats = ({ fetchAgain }) => {
-  const [loggedUser, setLoggedUser] = useState();
-
   const { user, selectedChat, setSelectedChat, chats, setChats } = ChatState();
 
   const headers = useHeaders();
@@ -27,7 +25,6 @@ const Chats = ({ fetchAgain }) => {
   };
 
   useEffect(() => {
-    setLoggedUser(JSON.parse(localStorage.getItem('user')));
     fetchChats();
   }, [fetchAgain]);
 

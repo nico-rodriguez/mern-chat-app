@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { ChatState } from '../context/ChatProvider';
 import { useCustomToast } from './toast';
 
 export const useSignup = () => {
@@ -10,6 +11,8 @@ export const useSignup = () => {
   const [confirmPassword, setConfirmPassword] = useState(true);
   const [picture, setPicture] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const { setUser } = ChatState();
 
   const history = useHistory();
 
@@ -69,7 +72,7 @@ export const useSignup = () => {
       );
 
       toast('Registration successful!', 'success', 'bottom');
-      localStorage.setItem('user', JSON.stringify(data));
+      setUser(data);
       setLoading(false);
       history.push('/chats');
     } catch ({ message }) {
