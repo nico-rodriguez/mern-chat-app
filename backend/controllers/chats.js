@@ -4,53 +4,50 @@ const Chat = require('../models/chat');
 const User = require('../models/user');
 
 const accessChat = asyncHandler(async (req, res) => {
-  const { userId } = req.body;
+  const userId = req.user._id;
+  const { userId: senderId } = req.body;
 
-  if (!userId) {
+  if (!senderId) {
     res.status(400);
     throw new Error("userId missing in the request's body");
   }
 
-  let isChat = await Chat.find({
+  const sender = await User.findById(senderId);
+  if (!sender) {
+    res.status(400);
+    throw new Error(`Invalid userID: ${senderId}`);
+  }
+
+  let chat = await Chat.findOne({
     isGroup: false,
     $and: [
-      { users: { $elemMatch: { $eq: req.user._id } } },
       { users: { $elemMatch: { $eq: userId } } },
+      { users: { $elemMatch: { $eq: senderId } } },
     ],
   })
     .populate('users', '-password')
     .populate('latestMessage');
-  if (!isChat) {
-    res.status(400);
-    throw new Error('Could not find the chat');
-  }
-
-  isChat = await User.populate(isChat, {
-    path: 'latestMessage.sender',
-    select: 'name picture email',
-  });
-
-  if (isChat.length > 0) {
-    res.json(isChat[0]);
-  } else {
+  if (!chat) {
     const chatData = {
-      name: 'sender',
+      name: sender.name,
       isGroup: false,
-      users: [req.user._id, userId],
+      users: [userId, senderId],
     };
 
-    const newChat = await Chat.create(chatData);
-    if (!newChat) {
+    chat = await Chat.create(chatData);
+    if (!chat) {
       res.status(400);
       throw new Error('Could not create chat');
     }
-    const chat = await Chat.findOne({ _id: newChat._id }).populate(
-      'users',
-      '-password'
-    );
-
-    res.json(chat);
+    chat = await Chat.findOne({ _id: chat._id }).populate('users', '-password');
+  } else {
+    chat = await User.populate(chat, {
+      path: 'latestMessage.sender',
+      select: 'name picture email',
+    });
   }
+
+  res.json(chat);
 });
 
 const fetchChats = asyncHandler(async (req, res) => {

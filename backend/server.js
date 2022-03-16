@@ -61,7 +61,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('leave_chat', (room) => {
-    console.log(`Leaved room: ${room}`);
+    console.log(`Leaved room ${room}`);
     socket.leave(room);
   });
 
