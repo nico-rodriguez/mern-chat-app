@@ -16,21 +16,24 @@ import { useCustomToast } from '../hooks/toast';
 import ProfileModal from './miscellaneous/ProfileModal';
 import UpdateGroupChatModal from './miscellaneous/UpdateGroupChatModal';
 import ScrollableChat from './ScrollableChat';
-import { io } from 'socket.io-client';
 import Lottie from 'react-lottie';
 import animationData from '../animations/typing.json';
 
 import './SingleChat.css';
 
-const ENDPOINT = 'http://localhost:5000';
-let socket, selectedChatCompare;
+let selectedChatCompare;
 let timer;
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
-  const { user, selectedChat, setSelectedChat, notification, setNotification } =
-    ChatState();
+  const {
+    user,
+    selectedChat,
+    setSelectedChat,
+    notification,
+    setNotification,
+    socket,
+  } = ChatState();
 
-  const [socketConnected, setSocketConnected] = useState(false);
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [newMessage, setNewMessage] = useState('');
@@ -45,7 +48,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const handleTyping = event => {
     setNewMessage(event.target.value);
 
-    if (!socketConnected) return;
+    if (!socket?.connected) return;
 
     socket.emit('typing', selectedChat._id);
 
@@ -88,8 +91,6 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
       );
       setMessages(data);
       setLoading(false);
-
-      socket.emit('join_chat', selectedChat._id);
     } catch (error) {
       toast('Error ocurred!', 'error', 'bottom', 'Failed to load messages');
     }
@@ -98,15 +99,14 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   useEffect(() => {
     fetchMessages();
 
+    selectedChatCompare && socket.emit('leave_chat', selectedChatCompare._id);
+    selectedChat && socket.emit('join_chat', selectedChat._id);
     selectedChatCompare = selectedChat;
   }, [selectedChat]);
 
   useEffect(() => {
-    socket = io(ENDPOINT);
     socket.emit('setup', user);
-    socket.on('connected', () => {
-      setSocketConnected(true);
-    });
+    socket.on('connected', () => {});
     socket.on('typing', () => {
       setIsTyping(true);
     });
@@ -116,19 +116,21 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   }, []);
 
   useEffect(() => {
-    socket.on('message_received', message => {
-      if (
-        !selectedChatCompare ||
-        selectedChatCompare._id !== message.chat._id
-      ) {
-        if (!notification.includes(message)) {
-          setNotification([message, ...notification]);
-          setFetchAgain(!fetchAgain);
+    if (socket) {
+      socket.on('message_received', message => {
+        if (
+          !selectedChatCompare ||
+          selectedChatCompare._id !== message.chat._id
+        ) {
+          if (!notification.includes(message)) {
+            setNotification([message, ...notification]);
+            setFetchAgain(!fetchAgain);
+          }
+        } else {
+          setMessages([...messages, message]);
         }
-      } else {
-        setMessages([...messages, message]);
-      }
-    });
+      });
+    }
   });
 
   return (

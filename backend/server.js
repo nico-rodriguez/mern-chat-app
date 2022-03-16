@@ -60,6 +60,11 @@ io.on('connection', (socket) => {
     socket.join(room);
   });
 
+  socket.on('leave_chat', (room) => {
+    console.log(`Leaved room: ${room}`);
+    socket.leave(room);
+  });
+
   socket.on('typing', (room) => {
     console.log(`Typing in ${room}`);
     socket.in(room).emit('typing');
@@ -78,16 +83,12 @@ io.on('connection', (socket) => {
     chat.users.forEach((user) => {
       if (user._id === message.sender._id) return;
 
+      console.log(`User ${user._id} received message ${message._id}`);
       socket.in(user._id).emit('message_received', message);
     });
   });
 
-  socket.off('setup', (userData) => {
-    console.log(`User ${userData._id} disconnected`);
-    // socket.leave()
-  });
-
-  socket.off('join_chat', (room) => {
-    console.log(`Leaving room ${room}`);
+  socket.on('disconnect', (reason) => {
+    console.log(`Socket disconnected because ${reason}`);
   });
 });

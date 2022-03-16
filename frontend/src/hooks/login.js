@@ -3,13 +3,16 @@ import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useCustomToast } from './toast';
 import { ChatState } from '../context/ChatProvider';
+import { io } from 'socket.io-client';
 
 export const useLogin = () => {
+  const ENDPOINT = 'http://localhost:5000';
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { setUser } = ChatState();
+  const { setUser, setSocket } = ChatState();
 
   const history = useHistory();
 
@@ -37,6 +40,7 @@ export const useLogin = () => {
 
       toast('Login successful!', 'success', 'bottom');
       setUser(data);
+      setSocket(io(ENDPOINT));
       setLoading(false);
       history.push('/chats');
     } catch ({ message }) {

@@ -45,23 +45,24 @@ const SideDrawer = () => {
 
   const {
     user,
-    setUser,
+    selectedChat,
     setSelectedChat,
     chats,
     setChats,
     notification,
     setNotification,
+    socket,
+    clearState,
   } = ChatState();
 
   const { sender } = useSender();
 
   const headers = useHeaders();
 
-  const logoutHandler = () => {
-    setUser(null);
-    setSelectedChat(null);
-    setNotification([]);
-    setChats([]);
+  const logoutHandler = async () => {
+    selectedChat && socket.emit('leave_chat', selectedChat._id);
+    socket.disconnect();
+    clearState();
     history.push('/');
   };
 
