@@ -9,15 +9,15 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { ChatState } from '../context/ChatProvider';
-import { useSender } from '../hooks/chats';
-import { useHeaders } from '../hooks/httpHeaders';
-import { useCustomToast } from '../hooks/toast';
-import ProfileModal from './miscellaneous/ProfileModal';
-import UpdateGroupChatModal from './miscellaneous/UpdateGroupChatModal';
+import { ChatState } from '../../context/ChatProvider';
+import { useSender } from '../../hooks/chats';
+import { useHeaders } from '../../hooks/httpHeaders';
+import { useCustomToast } from '../../hooks/toast';
+import ProfileModal from '../user/ProfileModal';
+import UpdateGroupChatModal from '../miscellaneous/UpdateGroupChatModal';
 import ScrollableChat from './ScrollableChat';
 import Lottie from 'react-lottie';
-import animationData from '../animations/typing.json';
+import animationData from '../../animations/typing.json';
 
 import './SingleChat.css';
 

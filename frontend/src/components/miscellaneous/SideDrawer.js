@@ -22,10 +22,10 @@ import {
 import { BellIcon, ChevronDownIcon } from '@chakra-ui/icons';
 import NotificationBadge, { Effect } from 'react-notification-badge';
 import { useState } from 'react';
-import ProfileModal from './ProfileModal';
+import ProfileModal from '../user/ProfileModal';
 import { useHistory } from 'react-router-dom';
-import UsersLoading from '../UsersLoading';
-import UserListItem from '../UserAvatar/UserListItem';
+import UsersLoading from '../user/UsersLoading';
+import UserListItem from '../user/UserListItem';
 import { ChatState } from '../../context/ChatProvider';
 import { useHeaders } from '../../hooks/httpHeaders';
 import { useCustomToast } from '../../hooks/toast';

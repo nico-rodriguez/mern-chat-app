@@ -1,12 +1,12 @@
 import axios from 'axios';
 import { Box, Button, Stack, Text } from '@chakra-ui/react';
 import { useEffect } from 'react';
-import { ChatState } from '../context/ChatProvider';
+import { ChatState } from '../../context/ChatProvider';
 import { AddIcon } from '@chakra-ui/icons';
-import Loading from './UsersLoading';
-import GroupChatModal from './miscellaneous/GroupChatModal';
-import { useHeaders } from '../hooks/httpHeaders';
-import { useCustomToast } from '../hooks/toast';
+import Loading from '../user/UsersLoading';
+import GroupChatModal from '../miscellaneous/GroupChatModal';
+import { useHeaders } from '../../hooks/httpHeaders';
+import { useCustomToast } from '../../hooks/toast';
 
 const Chats = ({ fetchAgain }) => {
   const { user, selectedChat, setSelectedChat, chats, setChats } = ChatState();

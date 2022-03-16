@@ -20,8 +20,8 @@ import { useState } from 'react';
 import { ChatState } from '../../context/ChatProvider';
 import { useHeaders } from '../../hooks/httpHeaders';
 import { useCustomToast } from '../../hooks/toast';
-import UserBadgeItem from '../UserAvatar/UserBadgeItem';
-import UserListItem from '../UserAvatar/UserListItem';
+import UserBadgeItem from '../user/UserBadgeItem';
+import UserListItem from '../user/UserListItem';
 
 const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
   const [groupChatName, setGroupChatName] = useState('');
