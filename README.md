@@ -6,10 +6,7 @@
   - [Table of Contents](#table-of-contents)
   - [About](#about)
   - [Features](#features)
-  - [Getting Started](#getting-started)
-    - [Prerequisites](#prerequisites)
-    - [Installing](#installing)
-  - [ACknowledgements](#acknowledgements)
+  - [Acknowledgements](#acknowledgements)
 
 ## About
 
@@ -28,19 +25,10 @@ My personal improvements over it:
 
 - Custom hooks
 - Better structure of the URLs for the API
+- Better socket management:
+  - Leave a room when changing between chats
+  - Close the socket on the log out
 
-## Getting Started
-
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See [deployment](#deployment) for notes on how to deploy the project on a live system.
-
-### Prerequisites
-
-The backend runs on `node 16.x`.
-
-### Installing
-
-In order to get a local development environment running, install all necessary dependencies with `npm install`.
-
-## ACknowledgements
+## Acknowledgements
 
 - [Piyush Agarwal](https://github.com/piyush-eon)

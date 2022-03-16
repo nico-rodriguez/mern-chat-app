@@ -55,7 +55,7 @@ const SideDrawer = () => {
     clearState,
   } = ChatState();
 
-  const { sender } = useSender();
+  const { getSender } = useSender();
 
   const headers = useHeaders();
 
@@ -138,19 +138,26 @@ const SideDrawer = () => {
             <MenuList pl={2}>
               {!(notification.length > 0)
                 ? 'No new messages'
-                : notification.map(notif => (
-                    <MenuItem
-                      key={notif._id}
-                      onClick={() => {
-                        setSelectedChat(notif.chat);
-                        setNotification(notification.filter(n => n !== notif));
-                      }}
-                    >
-                      {notif.chat.isGroup
-                        ? `New message in ${notif.chat.name}`
-                        : `New message from ${sender.name}`}
-                    </MenuItem>
-                  ))}
+                : notification.map(notif => {
+                    console.log(notif);
+                    return (
+                      <MenuItem
+                        key={notif._id}
+                        onClick={() => {
+                          setSelectedChat(notif.chat);
+                          setNotification(
+                            notification.filter(n => n !== notif)
+                          );
+                        }}
+                      >
+                        {notif.chat.isGroup
+                          ? `New message in ${notif.chat.name}`
+                          : `New message from ${
+                              getSender(notif.chat.users).name
+                            }`}
+                      </MenuItem>
+                    );
+                  })}
             </MenuList>
           </Menu>
 

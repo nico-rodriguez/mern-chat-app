@@ -4,6 +4,10 @@ export const useSender = () => {
   const { user, selectedChat } = ChatState();
   const users = selectedChat?.users;
 
+  const getSender = users => {
+    return users?.[0]._id === user._id ? users?.[1] : users?.[0];
+  };
+
   const isSameSenderMargin = (messages, m, i) => {
     if (
       i < messages.length - 1 &&
@@ -44,6 +48,7 @@ export const useSender = () => {
 
   return {
     sender: users?.[0]._id === user._id ? users?.[1] : users?.[0],
+    getSender,
     isSameSenderMargin,
     isSameSender,
     isLastMessage,
