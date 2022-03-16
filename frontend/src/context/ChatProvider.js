@@ -1,4 +1,7 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import { io } from 'socket.io-client';
+import { ENDPOINT } from '../config/constants';
 
 const ChatContext = createContext();
 
@@ -9,6 +12,8 @@ const ChatProvider = ({ children }) => {
   const [notification, setNotification] = useState([]);
   const [socket, setSocket] = useState();
 
+  const history = useHistory();
+
   const clearState = () => {
     setUser(null);
     setSelectedChat(null);
@@ -16,6 +21,17 @@ const ChatProvider = ({ children }) => {
     setNotification([]);
     setSocket(null);
   };
+
+  useEffect(() => {
+    const userInfo = JSON.parse(localStorage.getItem('user'));
+    setUser(userInfo);
+
+    if (!socket) {
+      setSocket(io(ENDPOINT));
+    }
+
+    if (!userInfo) history.push('/');
+  }, [history]);
 
   return (
     <ChatContext.Provider

@@ -38,6 +38,7 @@ export const useLogin = () => {
       );
 
       toast('Login successful!', 'success', 'bottom');
+      localStorage.setItem('user', JSON.stringify(data));
       setUser(data);
       setSocket(io(ENDPOINT));
       setLoading(false);
