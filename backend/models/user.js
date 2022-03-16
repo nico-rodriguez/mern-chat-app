@@ -18,7 +18,6 @@ const userSchema = new mongoose.Schema(
     },
     picture: {
       type: String,
-      required: true,
       default:
         'http://getdrawings.com/free-icon-bw/anonymous-avatar-icon-19.png',
     },

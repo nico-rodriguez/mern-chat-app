@@ -4,10 +4,9 @@ import { useHistory } from 'react-router-dom';
 import { useCustomToast } from './toast';
 import { ChatState } from '../context/ChatProvider';
 import { io } from 'socket.io-client';
+import { ENDPOINT } from '../config/constants';
 
 export const useLogin = () => {
-  const ENDPOINT = 'http://localhost:5000';
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);

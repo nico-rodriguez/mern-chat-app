@@ -67,12 +67,7 @@ export const Signup = () => {
 
       <FormControl id="picture">
         <FormLabel>Upload your picture</FormLabel>
-        <Input
-          type="file"
-          p={1.5}
-          accept="image/"
-          onChange={e => uploadPicture(e.target.files[0])}
-        />
+        <Input type="file" p={1.5} accept="image/" onChange={uploadPicture} />
       </FormControl>
 
       <Button
