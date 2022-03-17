@@ -4,8 +4,7 @@
   "description": "- [Talk-A-Tive](#talk-a-tive)\r   - [Table of Contents](#table-of-contents)\r   - [About](#about)\r   - [Features](#features)\r   - [Acknowledgements](#acknowledgements)",
   "main": "index.js",
   "scripts": {
-    "start": "cd backend && node server.js",
-    "build": "cd frontend && npm run build && cd .. && cp -r frontend/build backend"
+    "start": "cd backend && node server.js"
   },
   "repository": {
     "type": "git",
