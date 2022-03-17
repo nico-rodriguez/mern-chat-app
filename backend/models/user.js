@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema(
     picture: {
       type: String,
       default:
-        'http://getdrawings.com/free-icon-bw/anonymous-avatar-icon-19.png',
+        'http://res.cloudinary.com/dnjnlemli/image/upload/v1647535705/c4pnjlqj9wahx1npzbdv.png',
     },
   },
   {
