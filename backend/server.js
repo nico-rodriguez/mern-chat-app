@@ -30,6 +30,16 @@ app.use('/api/users', userRouter);
 app.use('/api/chats', chatsRouter);
 app.use('/api/chats', messagesRouter);
 
+// -------------------- DEPLOYMENT ------------------------
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(__dirname + '/../frontend/build'));
+} else {
+  app.get('/', (req, res) => {
+    res.send('API is running successfully!');
+  });
+}
+// -------------------- DEPLOYMENT ------------------------
+
 app.use(notFound);
 app.use(errorHandler);
 
