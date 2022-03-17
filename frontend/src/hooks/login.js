@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+// import { useHistory } from 'react-router-dom';
 import { useCustomToast } from './toast';
 import { ChatState } from '../context/ChatProvider';
 import { io } from 'socket.io-client';
@@ -13,7 +13,7 @@ export const useLogin = () => {
 
   const { setUser, setSocket } = ChatState();
 
-  const history = useHistory();
+  // const history = useHistory();
 
   const toast = useCustomToast();
 
@@ -42,7 +42,7 @@ export const useLogin = () => {
       setUser(data);
       setSocket(io(ENDPOINT));
       setLoading(false);
-      history.push('/chats');
+      // history.push('/chats');
     } catch ({ message }) {
       toast('Error occurred!', 'error', 'bottom', message);
       setLoading(false);

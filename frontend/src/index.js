@@ -10,11 +10,11 @@ import * as serviceWorker from './serviceWorker';
 ReactDOM.render(
   <StrictMode>
     <ChakraProvider>
-      <BrowserRouter>
-        <ChatProvider>
-          <App />
-        </ChatProvider>
-      </BrowserRouter>
+      {/* <BrowserRouter> */}
+      <ChatProvider>
+        <App />
+      </ChatProvider>
+      {/* </BrowserRouter> */}
     </ChakraProvider>
   </StrictMode>,
   document.getElementById('root')

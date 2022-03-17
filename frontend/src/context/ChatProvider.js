@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+// import { useHistory } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import { ENDPOINT } from '../config/constants';
 
@@ -12,7 +12,7 @@ const ChatProvider = ({ children }) => {
   const [notification, setNotification] = useState([]);
   const [socket, setSocket] = useState();
 
-  const history = useHistory();
+  // const history = useHistory();
 
   const clearState = () => {
     setUser(null);
@@ -20,6 +20,7 @@ const ChatProvider = ({ children }) => {
     setChats([]);
     setNotification([]);
     setSocket(null);
+    localStorage.removeItem('user');
   };
 
   useEffect(() => {
@@ -30,8 +31,9 @@ const ChatProvider = ({ children }) => {
       setSocket(io(ENDPOINT));
     }
 
-    if (!userInfo) history.push('/');
-  }, [history]);
+    // if (!userInfo) history.push('/');
+    // }, [history]);
+  }, []);
 
   return (
     <ChatContext.Provider

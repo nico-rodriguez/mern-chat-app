@@ -3,12 +3,14 @@ import { Route } from 'react-router-dom';
 import Chat from './pages/Chat';
 import Home from './pages/Home';
 import './App.css';
+import { ChatState } from './context/ChatProvider';
 
 function App() {
+  const { user, socket } = ChatState();
+
   return (
     <div className="app">
-      <Route path="/" component={Home} exact />
-      <Route path="/chats" component={Chat} />
+      {!(user || socket?.connected) ? <Home /> : <Chat />}
     </div>
   );
 }

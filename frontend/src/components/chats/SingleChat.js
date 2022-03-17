@@ -105,15 +105,17 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   }, [selectedChat]);
 
   useEffect(() => {
-    socket.emit('setup', user);
-    socket.on('connected', () => {});
-    socket.on('typing', () => {
-      setIsTyping(true);
-    });
-    socket.on('stop_typing', () => {
-      setIsTyping(false);
-    });
-  }, []);
+    if (socket && user) {
+      socket.emit('setup', user);
+      socket.on('connected', () => {});
+      socket.on('typing', () => {
+        setIsTyping(true);
+      });
+      socket.on('stop_typing', () => {
+        setIsTyping(false);
+      });
+    }
+  }, [socket, user]);
 
   useEffect(() => {
     if (socket) {

@@ -23,7 +23,7 @@ import { BellIcon, ChevronDownIcon } from '@chakra-ui/icons';
 import NotificationBadge, { Effect } from 'react-notification-badge';
 import { useState } from 'react';
 import ProfileModal from '../user/ProfileModal';
-import { useHistory } from 'react-router-dom';
+// import { useHistory } from 'react-router-dom';
 import UsersLoading from '../user/UsersLoading';
 import UserListItem from '../user/UserListItem';
 import { ChatState } from '../../context/ChatProvider';
@@ -41,7 +41,7 @@ const SideDrawer = () => {
 
   const toast = useCustomToast();
 
-  const history = useHistory();
+  // const history = useHistory();
 
   const {
     user,
@@ -63,7 +63,7 @@ const SideDrawer = () => {
     selectedChat && socket.emit('leave_chat', selectedChat._id);
     socket.disconnect();
     clearState();
-    history.push('/');
+    // history.push('/');
   };
 
   const handleSearch = async () => {
