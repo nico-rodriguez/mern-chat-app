@@ -32,7 +32,7 @@ app.use('/api/chats', messagesRouter);
 
 // -------------------- DEPLOYMENT ------------------------
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(__dirname + '/../frontend/build'));
+  app.use(express.static(__dirname + '/build'));
 } else {
   app.get('/', (req, res) => {
     res.send('API is running successfully!');
