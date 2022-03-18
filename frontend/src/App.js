@@ -1,5 +1,3 @@
-import { Route } from 'react-router-dom';
-
 import Chat from './pages/Chat';
 import Home from './pages/Home';
 import './App.css';
