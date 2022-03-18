@@ -1,5 +1,4 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-// import { useHistory } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import { ENDPOINT } from '../config/constants';
 
@@ -11,8 +10,6 @@ const ChatProvider = ({ children }) => {
   const [chats, setChats] = useState([]);
   const [notification, setNotification] = useState([]);
   const [socket, setSocket] = useState();
-
-  // const history = useHistory();
 
   const clearState = () => {
     setUser(null);
@@ -30,9 +27,6 @@ const ChatProvider = ({ children }) => {
     if (!socket) {
       setSocket(io(ENDPOINT));
     }
-
-    // if (!userInfo) history.push('/');
-    // }, [history]);
   }, []);
 
   return (

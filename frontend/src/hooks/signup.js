@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { useState } from 'react';
-// import { useHistory } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import { ENDPOINT } from '../config/constants';
 import { ChatState } from '../context/ChatProvider';
@@ -15,8 +14,6 @@ export const useSignup = () => {
   const [loading, setLoading] = useState(false);
 
   const { setUser, setSocket } = ChatState();
-
-  // const history = useHistory();
 
   const toast = useCustomToast();
 
@@ -77,7 +74,6 @@ export const useSignup = () => {
       setSocket(io(ENDPOINT));
       setUser(data);
       setLoading(false);
-      // history.push('/chats');
     } catch ({ message }) {
       toast('Error occurred!', 'error', 'bottom', message);
       setLoading(false);
