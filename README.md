@@ -10,7 +10,7 @@
 
 ## About
 
-Real time chat application with MERN stack. Deploy locally or visit [https://mern-chat-app-83616.herokuapp.com/](https://mern-chat-app-83616.herokuapp.com/). For local deployment, change the current value in the `ENDPOINT` constant in `frontend/src/config/constants.js` to the value in the comment inside the file.
+Real time chat application with MERN stack. Deploy locally or visit [https://talk-a-tive-gezj.onrender.com/](https://talk-a-tive-gezj.onrender.com/). For local deployment, change the current value in the `ENDPOINT` constant in `frontend/src/config/constants.js` to the value in the comment inside the file.
 
 ## Features
 
